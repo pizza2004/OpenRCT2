@@ -2509,6 +2509,8 @@ enum {
 
 	STR_TRACK_LIST_NAME_FORMAT = 5813,
 	STR_TRACK_PREVIEW_NAME_FORMAT = 5814,
+	
+	STR_CHAT = 5815,
 
 	// Have to include resource strings (from scenarios and objects) for the time being now that language is partially working
 	STR_COUNT = 32768

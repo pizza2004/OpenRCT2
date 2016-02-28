@@ -453,6 +453,7 @@ enum {
 	WC_NETWORK_STATUS = 126,
 	WC_SERVER_LIST = 127,
 	WC_SERVER_START = 128,
+	WC_CHAT = 129,
 
 	// Only used for colour schemes
 	WC_STAFF = 220,
@@ -639,6 +640,7 @@ void window_sign_small_open(rct_windownumber number);
 void window_news_options_open();
 void window_cheats_open();
 void window_multiplayer_open();
+void window_chat_open();
 void window_player_open(uint8 id);
 void window_network_status_open(const char* text, close_callback onClose);
 void window_network_status_close();

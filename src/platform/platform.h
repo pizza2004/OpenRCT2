@@ -23,7 +23,7 @@
 #define HAVE_MATH_H
 #endif // __WINDOWS__
 
-#include <SDL.h>
+#include "SDL.h"
 
 #include "../core/textinputbuffer.h"
 #include "../drawing/font.h"

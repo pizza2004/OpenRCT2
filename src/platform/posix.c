@@ -39,6 +39,7 @@
 #include <time.h>
 #include <fts.h>
 #include <sys/file.h>
+#include "SDL_main.h"
 
 // The name of the mutex used to prevent multiple instances of the game from running
 #define SINGLE_INSTANCE_MUTEX_NAME "openrct2.lock"
@@ -52,7 +53,7 @@ utf8 _openrctDataDirectoryPath[MAX_PATH] = { 0 };
  * The function that is called directly from the host application (rct2.exe)'s WinMain. This will be removed when OpenRCT2 can
  * be built as a stand alone application.
  */
-int main(int argc, const char **argv)
+int main(int argc, char *argv[])
 {
 	int run_game = cmdline_run(argv, argc);
 	if (run_game == 1)

@@ -14,7 +14,7 @@
  *****************************************************************************/
 #pragma endregion
 
-#include <SDL_platform.h>
+#include "SDL_platform.h"
 
 #if defined(DEBUG) && defined(__WINDOWS__)
     #define WIN32_LEAN_AND_MEAN

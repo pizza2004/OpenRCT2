@@ -272,6 +272,7 @@
     <ClCompile Include="src\ride\vehicle_paint.c" />
     <ClCompile Include="src\rct2\S6Importer.cpp" />
     <ClCompile Include="src\rct2\S6Exporter.cpp" />
+    <ClCompile Include="src\drawing\snow.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resources\resource.h" />

@@ -27,6 +27,8 @@
 #define CHAT_INPUT_SIZE 256
 
 bool gChatOpen = false;
+bool gChatWindowOpen = false;
+bool gChatWindowSend = false;
 char _chatCurrentLine[CHAT_INPUT_SIZE];
 char _chatHistory[CHAT_HISTORY_SIZE][CHAT_INPUT_SIZE];
 uint32 _chatHistoryTime[CHAT_HISTORY_SIZE];
@@ -37,7 +39,6 @@ int _chatTop;
 int _chatRight;
 int _chatBottom;
 
-static const char* chat_history_get(unsigned int index);
 static uint32 chat_history_get_time(unsigned int index);
 static void chat_clear_input();
 
@@ -143,7 +144,7 @@ void chat_input(int c)
 	}
 }
 
-static const char* chat_history_get(unsigned int index)
+const char* chat_history_get(unsigned int index)
 {
 	return _chatHistory[(_chatHistoryIndex + CHAT_HISTORY_SIZE - index - 1) % CHAT_HISTORY_SIZE];
 }

@@ -22,6 +22,7 @@
 #include "../drawing/drawing.h"
 #include "../game.h"
 #include "../input.h"
+#include "../interface/chat.h"
 #include "../interface/console.h"
 #include "../interface/keyboard_shortcut.h"
 #include "../interface/window.h"
@@ -620,6 +621,8 @@ void platform_process_messages()
 				window_update_textbox();
 			}
 			if (e.key.keysym.sym == SDLK_RETURN) {
+				if (gChatWindowOpen && !gChatWindowSend)
+					gChatWindowSend = true;
 				window_cancel_textbox();
 			}
 			if (e.key.keysym.sym == SDLK_LEFT) {

@@ -1506,6 +1506,8 @@ void game_handle_keyboard_input()
 		} else if (gChatOpen) {
 			chat_input(key);
 			continue;
+		} else if (gChatWindowOpen) {
+			continue;
 		}
 
 		key |= gInputPlaceObjectModifier << 8;

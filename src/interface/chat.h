@@ -21,6 +21,8 @@
 #include "../drawing/drawing.h"
 
 extern bool gChatOpen;
+extern bool gChatWindowOpen;
+extern bool gChatWindowSend;
 
 void chat_open();
 void chat_close();
@@ -33,5 +35,6 @@ void chat_draw();
 void chat_history_add(const char *src);
 void chat_input(int c);
 
+const char* chat_history_get(unsigned int index);
 
 #endif

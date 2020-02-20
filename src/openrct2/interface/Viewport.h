@@ -108,7 +108,6 @@ struct InteractionInfo
 };
 
 #define MAX_VIEWPORT_COUNT WINDOW_LIMIT_MAX
-#define MAX_ZOOM_LEVEL 3
 
 /**
  * A reference counter for whether something is forcing the grid lines to show. When the counter
@@ -123,7 +122,7 @@ extern rct_viewport g_viewport_list[MAX_VIEWPORT_COUNT];
 extern rct_viewport* g_music_tracking_viewport;
 extern int16_t gSavedViewX;
 extern int16_t gSavedViewY;
-extern uint8_t gSavedViewZoom;
+extern ZoomLevel gSavedViewZoom;
 extern uint8_t gSavedViewRotation;
 
 extern paint_entry* gNextFreePaintStruct;

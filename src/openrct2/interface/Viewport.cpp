@@ -1,4 +1,4 @@
-﻿/*****************************************************************************
+/*****************************************************************************
  * Copyright (c) 2014-2019 OpenRCT2 developers
  *
  * For a complete list of all authors, please refer to contributors.md
@@ -47,7 +47,7 @@ static std::unique_ptr<JobPool> _paintJobs;
 
 int16_t gSavedViewX;
 int16_t gSavedViewY;
-uint8_t gSavedViewZoom;
+ZoomLevel gSavedViewZoom;
 uint8_t gSavedViewRotation;
 
 paint_entry* gNextFreePaintStruct;
@@ -258,49 +258,49 @@ static void viewport_redraw_after_shift(
         if (viewport->x < window->x)
         {
             viewport->width = window->x - viewport->x;
-            viewport->view_width = viewport->width << viewport->zoom;
+            viewport->view_width = viewport->width * viewport->zoom;
             viewport_redraw_after_shift(dpi, window, viewport, x, y);
 
             viewport->x += viewport->width;
-            viewport->view_x += viewport->width << viewport->zoom;
+            viewport->view_x += viewport->width * viewport->zoom;
             viewport->width = view_copy.width - viewport->width;
-            viewport->view_width = viewport->width << viewport->zoom;
+            viewport->view_width = viewport->width * viewport->zoom;
             viewport_redraw_after_shift(dpi, window, viewport, x, y);
         }
         else if (viewport->x + viewport->width > window->x + window->width)
         {
             viewport->width = window->x + window->width - viewport->x;
-            viewport->view_width = viewport->width << viewport->zoom;
+            viewport->view_width = viewport->width * viewport->zoom;
             viewport_redraw_after_shift(dpi, window, viewport, x, y);
 
             viewport->x += viewport->width;
-            viewport->view_x += viewport->width << viewport->zoom;
+            viewport->view_x += viewport->width * viewport->zoom;
             viewport->width = view_copy.width - viewport->width;
-            viewport->view_width = viewport->width << viewport->zoom;
+            viewport->view_width = viewport->width * viewport->zoom;
             viewport_redraw_after_shift(dpi, window, viewport, x, y);
         }
         else if (viewport->y < window->y)
         {
             viewport->height = window->y - viewport->y;
-            viewport->view_width = viewport->width << viewport->zoom;
+            viewport->view_width = viewport->width * viewport->zoom;
             viewport_redraw_after_shift(dpi, window, viewport, x, y);
 
             viewport->y += viewport->height;
-            viewport->view_y += viewport->height << viewport->zoom;
+            viewport->view_y += viewport->height * viewport->zoom;
             viewport->height = view_copy.height - viewport->height;
-            viewport->view_width = viewport->width << viewport->zoom;
+            viewport->view_width = viewport->width * viewport->zoom;
             viewport_redraw_after_shift(dpi, window, viewport, x, y);
         }
         else if (viewport->y + viewport->height > window->y + window->height)
         {
             viewport->height = window->y + window->height - viewport->y;
-            viewport->view_width = viewport->width << viewport->zoom;
+            viewport->view_width = viewport->width * viewport->zoom;
             viewport_redraw_after_shift(dpi, window, viewport, x, y);
 
             viewport->y += viewport->height;
-            viewport->view_y += viewport->height << viewport->zoom;
+            viewport->view_y += viewport->height * viewport->zoom;
             viewport->height = view_copy.height - viewport->height;
-            viewport->view_width = viewport->width << viewport->zoom;
+            viewport->view_width = viewport->width * viewport->zoom;
             viewport_redraw_after_shift(dpi, window, viewport, x, y);
         }
 
@@ -406,13 +406,13 @@ static void viewport_shift_pixels(
 
 static void viewport_move(int16_t x, int16_t y, rct_window* w, rct_viewport* viewport)
 {
-    uint8_t zoom = (1 << viewport->zoom);
+    auto zoom = viewport->zoom;
 
     // Note: do not do the subtraction and then divide!
     // Note: Due to arithmetic shift != /zoom a shift will have to be used
     // hopefully when 0x006E7FF3 is finished this can be converted to /zoom.
-    int16_t x_diff = (viewport->view_x >> viewport->zoom) - (x >> viewport->zoom);
-    int16_t y_diff = (viewport->view_y >> viewport->zoom) - (y >> viewport->zoom);
+    int16_t x_diff = (viewport->view_x / viewport->zoom) - (x / viewport->zoom);
+    int16_t y_diff = (viewport->view_y / viewport->zoom) - (y / viewport->zoom);
 
     viewport->view_x = x;
     viewport->view_y = y;
@@ -805,10 +805,10 @@ void viewport_render(
     top = std::max<int32_t>(top - viewport->y, 0);
     bottom = std::min<int32_t>(bottom - viewport->y, viewport->height);
 
-    left <<= viewport->zoom;
-    right <<= viewport->zoom;
-    top <<= viewport->zoom;
-    bottom <<= viewport->zoom;
+    left = left * viewport->zoom;
+    right = right * viewport->zoom;
+    top = top * viewport->zoom;
+    bottom = bottom * viewport->zoom;
 
     left += viewport->view_x;
     right += viewport->view_x;
@@ -904,7 +904,7 @@ void viewport_paint(
     uint32_t viewFlags = viewport->flags;
     uint16_t width = right - left;
     uint16_t height = bottom - top;
-    uint16_t bitmask = 0xFFFF & (0xFFFF << viewport->zoom);
+    uint16_t bitmask = viewport->zoom >= 0 ? 0xFFFF & (0xFFFF * viewport->zoom) : 0xFFFF;
 
     width &= bitmask;
     height &= bitmask;
@@ -914,11 +914,11 @@ void viewport_paint(
     bottom = top + height;
 
     int16_t x = (int16_t)(left - (int16_t)(viewport->view_x & bitmask));
-    x >>= viewport->zoom;
+    x = x / viewport->zoom;
     x += viewport->x;
 
     int16_t y = (int16_t)(top - (int16_t)(viewport->view_y & bitmask));
-    y >>= viewport->zoom;
+    y = y / viewport->zoom;
     y += viewport->y;
 
     rct_drawpixelinfo dpi1 = *dpi;
@@ -927,7 +927,7 @@ void viewport_paint(
     dpi1.y = top;
     dpi1.width = width;
     dpi1.height = height;
-    dpi1.pitch = (dpi->width + dpi->pitch) - (width >> viewport->zoom);
+    dpi1.pitch = (dpi->width + dpi->pitch) - (width / viewport->zoom);
     dpi1.zoom_level = viewport->zoom;
 
     // make sure, the compare operation is done in int16_t to avoid the loop becoming an infiniteloop.
@@ -967,8 +967,8 @@ void viewport_paint(
         {
             int16_t leftPitch = x - dpi2.x;
             dpi2.width -= leftPitch;
-            dpi2.bits += leftPitch >> dpi2.zoom_level;
-            dpi2.pitch += leftPitch >> dpi2.zoom_level;
+            dpi2.bits += leftPitch / dpi2.zoom_level;
+            dpi2.pitch += leftPitch / dpi2.zoom_level;
             dpi2.x = x;
         }
 
@@ -977,7 +977,7 @@ void viewport_paint(
         {
             int16_t rightPitch = paintRight - x - 32;
             paintRight -= rightPitch;
-            dpi2.pitch += rightPitch >> dpi2.zoom_level;
+            dpi2.pitch += rightPitch / dpi2.zoom_level;
         }
         dpi2.width = paintRight - dpi2.x;
 
@@ -1065,8 +1065,8 @@ std::optional<CoordsXY> screen_pos_to_map_pos(ScreenCoordsXY screenCoords, int32
 ScreenCoordsXY screen_coord_to_viewport_coord(rct_viewport* viewport, ScreenCoordsXY screenCoords)
 {
     ScreenCoordsXY ret;
-    ret.x = ((screenCoords.x - viewport->x) << viewport->zoom) + viewport->view_x;
-    ret.y = ((screenCoords.y - viewport->y) << viewport->zoom) + viewport->view_y;
+    ret.x = ((screenCoords.x - viewport->x) * viewport->zoom) + viewport->view_x;
+    ret.y = ((screenCoords.y - viewport->y) * viewport->zoom) + viewport->view_y;
     return ret;
 }
 
@@ -1423,7 +1423,7 @@ static bool is_sprite_interacted_with_palette_set(
         return false;
     }
 
-    if (dpi->zoom_level != 0)
+    if (dpi->zoom_level > 0)
     {
         if (g1->flags & G1_FLAG_NO_ZOOM_DRAW)
         {
@@ -1440,14 +1440,14 @@ static bool is_sprite_interacted_with_palette_set(
                 /* .height = */ dpi->height,
                 /* .width = */ dpi->width,
                 /* .pitch = */ dpi->pitch,
-                /* .zoom_level = */ (uint16_t)(dpi->zoom_level - 1),
+                /* .zoom_level = */ dpi->zoom_level - 1,
             };
 
             return is_sprite_interacted_with_palette_set(&zoomed_dpi, imageId - g1->zoomed_offset, x / 2, y / 2, palette);
         }
     }
 
-    int32_t round = 1 << dpi->zoom_level;
+    int32_t round = std::max(1, 1 * dpi->zoom_level);
 
     if (g1->flags & G1_FLAG_RLE_COMPRESSION)
     {
@@ -1659,12 +1659,12 @@ void get_map_coordinates_from_pos_window(
         if (screenCoords.x >= 0 && screenCoords.x < (int32_t)myviewport->width && screenCoords.y >= 0
             && screenCoords.y < (int32_t)myviewport->height)
         {
-            screenCoords.x <<= myviewport->zoom;
-            screenCoords.y <<= myviewport->zoom;
+            screenCoords.x = screenCoords.x * myviewport->zoom;
+            screenCoords.y = screenCoords.y * myviewport->zoom;
             screenCoords.x += (int32_t)myviewport->view_x;
             screenCoords.y += (int32_t)myviewport->view_y;
-            screenCoords.x &= (0xFFFF << myviewport->zoom) & 0xFFFF;
-            screenCoords.y &= (0xFFFF << myviewport->zoom) & 0xFFFF;
+            screenCoords.x &= (0xFFFF * myviewport->zoom) & 0xFFFF;
+            screenCoords.y &= (0xFFFF * myviewport->zoom) & 0xFFFF;
             rct_drawpixelinfo dpi;
             dpi.x = screenCoords.x;
             dpi.y = screenCoords.y;
@@ -1724,15 +1724,16 @@ void viewport_invalidate(rct_viewport* viewport, int32_t left, int32_t top, int3
         right = std::min(right, viewportRight);
         bottom = std::min(bottom, viewportBottom);
 
-        uint8_t zoom = 1 << viewport->zoom;
         left -= viewportLeft;
         top -= viewportTop;
         right -= viewportLeft;
         bottom -= viewportTop;
-        left /= zoom;
-        top /= zoom;
-        right /= zoom;
-        bottom /= zoom;
+
+        left = left / viewport->zoom;
+        top = top / viewport->zoom;
+        right = right / viewport->zoom;
+        bottom = bottom / viewport->zoom;
+
         left += viewport->x;
         top += viewport->y;
         right += viewport->x;

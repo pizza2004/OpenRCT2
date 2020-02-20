@@ -553,8 +553,8 @@ static void input_viewport_drag_continue()
             // As the user moved the mouse, don't interpret it as right click in any case.
             _ticksSinceDragStart = 1000;
 
-            differentialCoords.x *= 1 << (viewport->zoom + 1);
-            differentialCoords.y *= 1 << (viewport->zoom + 1);
+            differentialCoords.x = differentialCoords.x * (viewport->zoom + 1);
+            differentialCoords.y = differentialCoords.y * (viewport->zoom + 1);
             if (gConfigGeneral.invert_viewport_drag)
             {
                 w->saved_view_x -= differentialCoords.x;
@@ -1590,8 +1590,9 @@ void input_scroll_viewport(ScreenCoordsXY scrollScreenCoords)
 
     const int32_t speed = gConfigGeneral.edge_scrolling_speed;
 
-    int32_t dx = scrollScreenCoords.x * (speed << viewport->zoom);
-    int32_t dy = scrollScreenCoords.y * (speed << viewport->zoom);
+    int32_t multiplier = speed * viewport->zoom;
+    int32_t dx = scrollScreenCoords.x * multiplier;
+    int32_t dy = scrollScreenCoords.y * multiplier;
 
     if (scrollScreenCoords.x != 0)
     {

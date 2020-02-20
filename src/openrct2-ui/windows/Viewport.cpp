@@ -131,14 +131,14 @@ static void window_viewport_mouseup(rct_window* w, rct_widgetindex widgetIndex)
             window_close(w);
             break;
         case WIDX_ZOOM_IN:
-            if (w->viewport != nullptr && w->viewport->zoom > 0)
+            if (w->viewport != nullptr && w->viewport->zoom > ZoomLevel::min())
             {
                 w->viewport->zoom--;
                 w->Invalidate();
             }
             break;
         case WIDX_ZOOM_OUT:
-            if (w->viewport != nullptr && w->viewport->zoom < 3)
+            if (w->viewport != nullptr && w->viewport->zoom < ZoomLevel::max())
             {
                 w->viewport->zoom++;
                 w->Invalidate();
@@ -206,17 +206,17 @@ static void window_viewport_invalidate(rct_window* w)
 
     // Set disabled widgets
     w->disabled_widgets = 0;
-    if (viewport->zoom == 0)
+    if (viewport->zoom == ZoomLevel::min())
         w->disabled_widgets |= 1 << WIDX_ZOOM_IN;
-    if (viewport->zoom >= 3)
+    if (viewport->zoom >= ZoomLevel::max())
         w->disabled_widgets |= 1 << WIDX_ZOOM_OUT;
 
     viewport->x = w->x + viewportWidget->left;
     viewport->y = w->y + viewportWidget->top;
     viewport->width = viewportWidget->right - viewportWidget->left;
     viewport->height = viewportWidget->bottom - viewportWidget->top;
-    viewport->view_width = viewport->width << viewport->zoom;
-    viewport->view_height = viewport->height << viewport->zoom;
+    viewport->view_width = viewport->width * viewport->zoom;
+    viewport->view_height = viewport->height * viewport->zoom;
 }
 
 static void window_viewport_paint(rct_window* w, rct_drawpixelinfo* dpi)

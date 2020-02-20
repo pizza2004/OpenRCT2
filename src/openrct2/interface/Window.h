@@ -13,6 +13,7 @@
 #include "../common.h"
 #include "../ride/RideTypes.h"
 #include "../world/Location.hpp"
+#include "ZoomLevel.hpp"
 
 #include <functional>
 #include <limits>
@@ -98,7 +99,7 @@ struct rct_viewport
     int16_t view_width;  // 0x0C
     int16_t view_height; // 0x0E
     uint32_t flags;      // 0x12
-    uint8_t zoom;        // 0x10
+    ZoomLevel zoom;
     uint8_t var_11;
     uint8_t visibility; // VISIBILITY_CACHE
 };
@@ -674,7 +675,7 @@ void window_rotate_camera(rct_window* w, int32_t direction);
 void window_viewport_get_map_coords_by_cursor(
     rct_window* w, int16_t* map_x, int16_t* map_y, int16_t* offset_x, int16_t* offset_y);
 void window_viewport_centre_tile_around_cursor(rct_window* w, int16_t map_x, int16_t map_y, int16_t offset_x, int16_t offset_y);
-void window_zoom_set(rct_window* w, int32_t zoomLevel, bool atCursor);
+void window_zoom_set(rct_window* w, ZoomLevel zoomLevel, bool atCursor);
 void window_zoom_in(rct_window* w, bool atCursor);
 void window_zoom_out(rct_window* w, bool atCursor);
 void main_window_zoom(bool zoomIn, bool atCursor);

@@ -869,11 +869,11 @@ static void window_top_toolbar_invalidate(rct_window* w)
     }
 
     // Zoomed out/in disable. Not sure where this code is in the original.
-    if (window_get_main()->viewport->zoom == 0)
+    if (window_get_main()->viewport->zoom == ZoomLevel::min())
     {
         w->disabled_widgets |= (1 << WIDX_ZOOM_IN);
     }
-    else if (window_get_main()->viewport->zoom >= MAX_ZOOM_LEVEL)
+    else if (window_get_main()->viewport->zoom >= ZoomLevel::max())
     {
         w->disabled_widgets |= (1 << WIDX_ZOOM_OUT);
     }
@@ -1224,7 +1224,7 @@ static void sub_6E1F34(
     // The upper byte of selected_scenery contains the type, the lower byte the index.
     uint8_t scenery_type = selected_scenery >> 8;
     selected_scenery &= 0xFF;
-    uint16_t maxPossibleHeight = (std::numeric_limits<decltype(TileElement::base_height)>::max() - 32) << MAX_ZOOM_LEVEL;
+    uint16_t maxPossibleHeight = (std::numeric_limits<decltype(TileElement::base_height)>::max() - 32) * ZoomLevel::max();
     bool can_raise_item = false;
 
     if (scenery_type == SCENERY_TYPE_SMALL)
@@ -1317,7 +1317,7 @@ static void sub_6E1F34(
                 auto* mainWnd = window_get_main();
                 if (mainWnd && mainWnd->viewport)
                 {
-                    gSceneryShiftPressZOffset <<= mainWnd->viewport->zoom;
+                    gSceneryShiftPressZOffset = gSceneryShiftPressZOffset * mainWnd->viewport->zoom;
                 }
                 gSceneryShiftPressZOffset = floor2(gSceneryShiftPressZOffset, 8);
 
@@ -3026,7 +3026,7 @@ static void window_top_toolbar_land_tool_drag(int16_t x, int16_t y)
     if (!viewport)
         return;
 
-    int16_t tile_height = -16 / (1 << viewport->zoom);
+    int16_t tile_height = -16 / viewport->zoom;
 
     int32_t y_diff = y - gInputDragLast.y;
 
@@ -3069,8 +3069,7 @@ static void window_top_toolbar_water_tool_drag(int16_t x, int16_t y)
     if (!viewport)
         return;
 
-    int16_t dx = -16;
-    dx >>= viewport->zoom;
+    int16_t dx = -16 / viewport->zoom;
 
     y -= gInputDragLast.y;
 

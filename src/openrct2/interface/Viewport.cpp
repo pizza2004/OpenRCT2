@@ -1663,8 +1663,11 @@ void get_map_coordinates_from_pos_window(
             screenCoords.y = screenCoords.y * myviewport->zoom;
             screenCoords.x += (int32_t)myviewport->view_x;
             screenCoords.y += (int32_t)myviewport->view_y;
-            screenCoords.x &= (0xFFFF * myviewport->zoom) & 0xFFFF;
-            screenCoords.y &= (0xFFFF * myviewport->zoom) & 0xFFFF;
+            if (myviewport->zoom > 0)
+            {
+                screenCoords.x &= (0xFFFF * myviewport->zoom) & 0xFFFF;
+                screenCoords.y &= (0xFFFF * myviewport->zoom) & 0xFFFF;
+            }
             rct_drawpixelinfo dpi;
             dpi.x = screenCoords.x;
             dpi.y = screenCoords.y;

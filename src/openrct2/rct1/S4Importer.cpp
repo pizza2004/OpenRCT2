@@ -1361,7 +1361,7 @@ private:
             }
         }
         // Fix the news items in advance
-        for (auto i = 0; i < MAX_NEWS_ITEMS; i++)
+        for (auto i = 0; i < NewsItem::MaxItems; i++)
         {
             rct12_news_item* newsItem = &_s4.messages[i];
 

@@ -276,7 +276,7 @@ static void window_news_scrollpaint(rct_window* w, rct_drawpixelinfo* dpi, int32
             int32_t press = 0;
             if (w->news.var_480 != -1)
             {
-                news_item_is_valid_idx(w->news.var_480 + NEWS_ITEM_HISTORY_START);
+                news_item_is_valid_idx(w->news.var_480 + NewsItem::HistoryStart);
                 if (i == w->news.var_480 && w->news.var_482 == 1)
                     press = INSET_RECT_FLAG_BORDER_INSET;
             }
@@ -352,7 +352,7 @@ static void window_news_scrollpaint(rct_window* w, rct_drawpixelinfo* dpi, int32
             int32_t press = 0;
             if (w->news.var_480 != -1)
             {
-                news_item_is_valid_idx(w->news.var_480 + NEWS_ITEM_HISTORY_START);
+                news_item_is_valid_idx(w->news.var_480 + NewsItem::HistoryStart);
                 if (i == w->news.var_480 && w->news.var_482 == 2)
                     press = 0x20;
             }

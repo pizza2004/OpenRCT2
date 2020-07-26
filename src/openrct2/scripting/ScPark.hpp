@@ -95,7 +95,7 @@ namespace OpenRCT2::Scripting
 
         bool isArchived_get() const
         {
-            return _index >= NEWS_ITEM_HISTORY_START;
+            return _index >= NewsItem::HistoryStart;
         }
 
         uint16_t month_get() const
@@ -296,7 +296,7 @@ namespace OpenRCT2::Scripting
             }
             for (size_t i = 0, newsSize = gNewsItems.GetArchived().size(); i < newsSize; i++)
             {
-                result.push_back(std::make_shared<ScParkMessage>(i + NEWS_ITEM_HISTORY_START));
+                result.push_back(std::make_shared<ScParkMessage>(i + NewsItem::HistoryStart));
             }
             return result;
         }
@@ -304,14 +304,14 @@ namespace OpenRCT2::Scripting
         void messages_set(const std::vector<DukValue>& value)
         {
             int32_t index = 0;
-            int32_t archiveIndex = NEWS_ITEM_HISTORY_START;
+            int32_t archiveIndex = NewsItem::HistoryStart;
             for (const auto& item : value)
             {
                 auto isArchived = item["isArchived"].as_bool();
                 auto newsItem = FromDuk<NewsItem::Object>(item);
                 if (isArchived)
                 {
-                    if (archiveIndex < MAX_NEWS_ITEMS)
+                    if (archiveIndex < NewsItem::MaxItems)
                     {
                         gNewsItems[archiveIndex] = newsItem;
                         archiveIndex++;
@@ -319,7 +319,7 @@ namespace OpenRCT2::Scripting
                 }
                 else
                 {
-                    if (index < NEWS_ITEM_HISTORY_START)
+                    if (index < NewsItem::HistoryStart)
                     {
                         gNewsItems[index] = newsItem;
                         index++;
@@ -328,11 +328,11 @@ namespace OpenRCT2::Scripting
             }
 
             // End the lists by setting next item to null
-            if (index < NEWS_ITEM_HISTORY_START)
+            if (index < NewsItem::HistoryStart)
             {
                 gNewsItems[index].Type = NewsItem::Type::Null;
             }
-            if (archiveIndex < MAX_NEWS_ITEMS)
+            if (archiveIndex < NewsItem::MaxItems)
             {
                 gNewsItems[archiveIndex].Type = NewsItem::Type::Null;
             }

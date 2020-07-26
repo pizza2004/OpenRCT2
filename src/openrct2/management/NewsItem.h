@@ -112,11 +112,11 @@ namespace NewsItem
             return Flags & NewsItem::Flags::HasButton;
         }
     };
-} // namespace News
 
-constexpr int32_t NEWS_ITEM_HISTORY_START = 11;
-constexpr int32_t MAX_NEWS_ITEMS_ARCHIVE = 50;
-constexpr int32_t MAX_NEWS_ITEMS = NEWS_ITEM_HISTORY_START + MAX_NEWS_ITEMS_ARCHIVE;
+    constexpr int32_t HistoryStart = 11;
+    constexpr int32_t ItemsArchive = 50;
+    constexpr int32_t MaxItems = NewsItem::HistoryStart + NewsItem::ItemsArchive;
+} // namespace News
 
 template<std::size_t N> class NewsItemQueue
 {
@@ -284,8 +284,8 @@ private:
     int32_t RemoveTime() const;
     void AppendToArchive(NewsItem::Object& item);
 
-    NewsItemQueue<NEWS_ITEM_HISTORY_START> Recent;
-    NewsItemQueue<MAX_NEWS_ITEMS_ARCHIVE> Archived;
+    NewsItemQueue<NewsItem::HistoryStart> Recent;
+    NewsItemQueue<NewsItem::ItemsArchive> Archived;
 };
 
 extern NewsItemQueues gNewsItems;

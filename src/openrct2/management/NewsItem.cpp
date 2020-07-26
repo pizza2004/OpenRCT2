@@ -38,7 +38,7 @@ const NewsItem::Object& NewsItemQueues::Current() const
 
 bool news_item_is_valid_idx(int32_t index)
 {
-    if (index >= MAX_NEWS_ITEMS)
+    if (index >= NewsItem::MaxItems)
     {
         log_error("Tried to get news item past MAX_NEWS.");
         return false;
@@ -450,14 +450,14 @@ void news_item_add_to_queue_custom(NewsItem::Object* newNewsItem)
 
 void news_item_remove(int32_t index)
 {
-    if (index < 0 || index >= MAX_NEWS_ITEMS)
+    if (index < 0 || index >= NewsItem::MaxItems)
         return;
 
     // News item is already null, no need to remove it
     if (gNewsItems[index].Type == NewsItem::Type::Null)
         return;
 
-    size_t newsBoundary = index < NEWS_ITEM_HISTORY_START ? NEWS_ITEM_HISTORY_START : MAX_NEWS_ITEMS;
+    size_t newsBoundary = index < NewsItem::HistoryStart ? NewsItem::HistoryStart : NewsItem::MaxItems;
     for (size_t i = index; i < newsBoundary - 1; i++)
     {
         gNewsItems[i] = gNewsItems[i + 1];

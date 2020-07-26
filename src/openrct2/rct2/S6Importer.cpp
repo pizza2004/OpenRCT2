@@ -429,7 +429,7 @@ public:
             NewsItem* dst = &gNewsItems[i];
             if (src->Type < GetNewsItemTypeCount())
             {
-                dst->Type = static_cast<News::ItemType>(src->Type);
+                dst->Type = static_cast<News::Item::Type>(src->Type);
                 dst->Flags = src->Flags;
                 dst->Assoc = src->Assoc;
                 dst->Ticks = src->Ticks;
@@ -442,7 +442,7 @@ public:
                 // In case where news item type is broken, consider all remaining news items invalid.
                 log_error("Invalid news type 0x%x for news item %d, ignoring remaining news items", src->Type, i);
                 // Still need to set the correct type to properly terminate the queue
-                dst->Type = News::ItemType::Null;
+                dst->Type = News::Item::Type::Null;
                 break;
             }
         }

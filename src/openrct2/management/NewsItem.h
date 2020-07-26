@@ -69,13 +69,34 @@ struct NewsItem
     {
         return Type == News::ItemType::Null;
     }
+
+    constexpr uint8_t GetTypeProperties() const
+    {
+        switch (Type)
+        {
+            case News::ItemType::Blank:
+                return NEWS_TYPE_HAS_LOCATION;
+            case News::ItemType::Money:
+            case News::ItemType::Research:
+            case News::ItemType::Peeps:
+            case News::ItemType::Award:
+            case News::ItemType::Graph:
+                return NEWS_TYPE_HAS_SUBJECT;
+            case News::ItemType::Ride:
+            case News::ItemType::PeepOnRide:
+            case News::ItemType::Peep:
+                return NEWS_TYPE_HAS_LOCATION | NEWS_TYPE_HAS_SUBJECT;
+            case News::ItemType::Null:
+            case News::ItemType::Count:
+            default:
+                return 0;
+        }
+    }
 };
 
 constexpr int32_t NEWS_ITEM_HISTORY_START = 11;
 constexpr int32_t MAX_NEWS_ITEMS_ARCHIVE = 50;
 constexpr int32_t MAX_NEWS_ITEMS = NEWS_ITEM_HISTORY_START + MAX_NEWS_ITEMS_ARCHIVE;
-
-extern const uint8_t news_type_properties[10];
 
 template<std::size_t N> class NewsItemQueue
 {

@@ -52,6 +52,30 @@ constexpr size_t GetNewsItemTypeCount()
     return static_cast<size_t>(News::ItemType::Count);
 }
 
+constexpr uint8_t GetNewsItemTypeProperties(News::ItemType type)
+{
+    switch (type)
+    {
+        case News::ItemType::Null:
+            return 0;
+        case News::ItemType::Ride:
+        case News::ItemType::PeepOnRide:
+        case News::ItemType::Peep:
+            return NEWS_TYPE_HAS_LOCATION | NEWS_TYPE_HAS_SUBJECT;
+        case News::ItemType::Money:
+            return NEWS_TYPE_HAS_SUBJECT;
+        case News::ItemType::Blank:
+            return NEWS_TYPE_HAS_LOCATION;
+        case News::ItemType::Research:
+        case News::ItemType::Peeps:
+        case News::ItemType::Award:
+        case News::ItemType::Graph:
+            return NEWS_TYPE_HAS_SUBJECT;
+        default:
+            return 0;
+    }
+}
+
 /**
  * A single news item / message.
  */
@@ -74,8 +98,6 @@ struct NewsItem
 constexpr int32_t NEWS_ITEM_HISTORY_START = 11;
 constexpr int32_t MAX_NEWS_ITEMS_ARCHIVE = 50;
 constexpr int32_t MAX_NEWS_ITEMS = NEWS_ITEM_HISTORY_START + MAX_NEWS_ITEMS_ARCHIVE;
-
-extern const uint8_t news_type_properties[10];
 
 template<std::size_t N> class NewsItemQueue
 {

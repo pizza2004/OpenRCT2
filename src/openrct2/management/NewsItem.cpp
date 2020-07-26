@@ -424,7 +424,7 @@ void news_item_disable_news(News::ItemType type, uint32_t assoc)
     gNewsItems.ForeachRecentNews([type, assoc](auto& newsItem) {
         if (type == newsItem.Type && assoc == newsItem.Assoc)
         {
-            newsItem.Flags |= NEWS_FLAG_HAS_BUTTON;
+            newsItem.Flags |= News::ItemFlags::HasButton;
             if (&newsItem == &gNewsItems.Current())
             {
                 auto intent = Intent(INTENT_ACTION_INVALIDATE_TICKER_NEWS);
@@ -436,7 +436,7 @@ void news_item_disable_news(News::ItemType type, uint32_t assoc)
     gNewsItems.ForeachArchivedNews([type, assoc](auto& newsItem) {
         if (type == newsItem.Type && assoc == newsItem.Assoc)
         {
-            newsItem.Flags |= NEWS_FLAG_HAS_BUTTON;
+            newsItem.Flags |= News::ItemFlags::HasButton;
             window_invalidate_by_class(WC_RECENT_NEWS);
         }
     });

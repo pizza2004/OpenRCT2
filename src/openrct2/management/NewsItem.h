@@ -42,12 +42,12 @@ namespace News
         HasSubject,
         HasSubjectAndLocation
     };
-} // namespace News
 
-enum
-{
-    NEWS_FLAG_HAS_BUTTON = 1 << 0,
-};
+    enum ItemFlags : uint8_t
+    {
+        HasButton = 1 << 0,
+    };
+} // namespace News
 
 constexpr size_t GetNewsItemTypeCount()
 {
@@ -110,6 +110,11 @@ struct NewsItem
         if (properties == News::ItemTypeProperty::HasLocation || properties == News::ItemTypeProperty::HasSubjectAndLocation)
             return true;
         return false;
+    }
+
+    constexpr bool HasButton() const noexcept
+    {
+        return Flags & News::ItemFlags::HasButton;
     }
 };
 

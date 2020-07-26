@@ -116,128 +116,128 @@ namespace NewsItem
     constexpr int32_t HistoryStart = 11;
     constexpr int32_t ItemsArchive = 50;
     constexpr int32_t MaxItems = NewsItem::HistoryStart + NewsItem::ItemsArchive;
+
+    template<std::size_t N> class Queue
+    {
+    public:
+        static_assert(N > 0, "Cannot instantiate NewsItem::Queue with size=0");
+
+        using value_type = typename std::array<NewsItem::Object, N>::value_type;
+        using pointer = value_type*;
+        using const_pointer = const value_type*;
+        using reference = value_type&;
+        using const_reference = const value_type&;
+        using iterator = typename std::array<NewsItem::Object, N>::iterator;
+        using const_iterator = typename std::array<NewsItem::Object, N>::const_iterator;
+        using size_type = std::size_t;
+        using difference_type = std::ptrdiff_t;
+        using reverse_iterator = std::reverse_iterator<iterator>;
+        using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
+        Queue()
+        {
+            QueueObject[0].Type = NewsItem::Type::Null;
+        }
+
+        constexpr iterator begin() noexcept
+        {
+            return std::begin(QueueObject);
+        }
+        constexpr const_iterator begin() const noexcept
+        {
+            return cbegin();
+        }
+        constexpr const_iterator cbegin() const noexcept
+        {
+            return std::cbegin(QueueObject);
+        }
+        iterator end() noexcept
+        {
+            return std::find_if(std::begin(QueueObject), std::end(QueueObject), [](const_reference item) { return item.IsEmpty(); });
+        }
+        const_iterator end() const noexcept
+        {
+            return cend();
+        }
+        const_iterator cend() const noexcept
+        {
+            return std::find_if(std::cbegin(QueueObject), std::cend(QueueObject), [](const_reference item) { return item.IsEmpty(); });
+        }
+
+        constexpr bool empty() const noexcept
+        {
+            return QueueObject[0].IsEmpty();
+        }
+
+        size_type size() const noexcept
+        {
+            return std::distance(cbegin(), cend());
+        }
+
+        reference front() noexcept
+        {
+            return *begin();
+        }
+        const_reference front() const noexcept
+        {
+            return *cbegin();
+        }
+        reference back() noexcept
+        {
+            return *end();
+        }
+        const_reference back() const noexcept
+        {
+            return *cend();
+        }
+
+        void pop_front()
+        {
+            std::move(std::begin(QueueObject) + 1, std::end(QueueObject), std::begin(QueueObject));
+            QueueObject[N - 1].Type = NewsItem::Type::Null;
+        }
+
+        void push_back(const_reference item)
+        {
+            auto it = end();
+            if (!std::distance(it, std::end(QueueObject)))
+            {
+                // Reached queue max size, need to free some space
+                pop_front();
+                QueueObject[N - 1] = item;
+            }
+            else
+            {
+                *it = item;
+                ++it;
+                if (std::distance(it, std::end(QueueObject)))
+                    it->Type = NewsItem::Type::Null;
+            }
+        }
+
+        reference operator[](size_type n) noexcept
+        {
+            return QueueObject[n];
+        }
+        const_reference operator[](size_type n) const noexcept
+        {
+            return QueueObject[n];
+        }
+
+        constexpr size_type capacity() const noexcept
+        {
+            return N;
+        }
+
+        void clear() noexcept
+        {
+            front().Type = NewsItem::Type::Null;
+        }
+
+    private:
+        std::array<NewsItem::Object, N> QueueObject;
+    };
 } // namespace News
-
-template<std::size_t N> class NewsItemQueue
-{
-public:
-    static_assert(N > 0, "Cannot instantiate NewsItemQueue with size=0");
-
-    using value_type = typename std::array<NewsItem::Object, N>::value_type;
-    using pointer = value_type*;
-    using const_pointer = const value_type*;
-    using reference = value_type&;
-    using const_reference = const value_type&;
-    using iterator = typename std::array<NewsItem::Object, N>::iterator;
-    using const_iterator = typename std::array<NewsItem::Object, N>::const_iterator;
-    using size_type = std::size_t;
-    using difference_type = std::ptrdiff_t;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-
-    NewsItemQueue()
-    {
-        Queue[0].Type = NewsItem::Type::Null;
-    }
-
-    constexpr iterator begin() noexcept
-    {
-        return std::begin(Queue);
-    }
-    constexpr const_iterator begin() const noexcept
-    {
-        return cbegin();
-    }
-    constexpr const_iterator cbegin() const noexcept
-    {
-        return std::cbegin(Queue);
-    }
-    iterator end() noexcept
-    {
-        return std::find_if(std::begin(Queue), std::end(Queue), [](const_reference item) { return item.IsEmpty(); });
-    }
-    const_iterator end() const noexcept
-    {
-        return cend();
-    }
-    const_iterator cend() const noexcept
-    {
-        return std::find_if(std::cbegin(Queue), std::cend(Queue), [](const_reference item) { return item.IsEmpty(); });
-    }
-
-    constexpr bool empty() const noexcept
-    {
-        return Queue[0].IsEmpty();
-    }
-
-    size_type size() const noexcept
-    {
-        return std::distance(cbegin(), cend());
-    }
-
-    reference front() noexcept
-    {
-        return *begin();
-    }
-    const_reference front() const noexcept
-    {
-        return *cbegin();
-    }
-    reference back() noexcept
-    {
-        return *end();
-    }
-    const_reference back() const noexcept
-    {
-        return *cend();
-    }
-
-    void pop_front()
-    {
-        std::move(std::begin(Queue) + 1, std::end(Queue), std::begin(Queue));
-        Queue[N - 1].Type = NewsItem::Type::Null;
-    }
-
-    void push_back(const_reference item)
-    {
-        auto it = end();
-        if (!std::distance(it, std::end(Queue)))
-        {
-            // Reached queue max size, need to free some space
-            pop_front();
-            Queue[N - 1] = item;
-        }
-        else
-        {
-            *it = item;
-            ++it;
-            if (std::distance(it, std::end(Queue)))
-                it->Type = NewsItem::Type::Null;
-        }
-    }
-
-    reference operator[](size_type n) noexcept
-    {
-        return Queue[n];
-    }
-    const_reference operator[](size_type n) const noexcept
-    {
-        return Queue[n];
-    }
-
-    constexpr size_type capacity() const noexcept
-    {
-        return N;
-    }
-
-    void clear() noexcept
-    {
-        front().Type = NewsItem::Type::Null;
-    }
-
-private:
-    std::array<NewsItem::Object, N> Queue;
-};
 
 struct NewsItemQueues
 {
@@ -284,8 +284,8 @@ private:
     int32_t RemoveTime() const;
     void AppendToArchive(NewsItem::Object& item);
 
-    NewsItemQueue<NewsItem::HistoryStart> Recent;
-    NewsItemQueue<NewsItem::ItemsArchive> Archived;
+    NewsItem::Queue<NewsItem::HistoryStart> Recent;
+    NewsItem::Queue<NewsItem::ItemsArchive> Archived;
 };
 
 extern NewsItemQueues gNewsItems;

@@ -1659,19 +1659,19 @@ static int32_t cc_add_news_item([[maybe_unused]] InteractiveConsole& console, [[
     if (argv.size() < 3)
     {
         console.WriteLineWarning("Too few arguments");
-        static_assert(GetNewsItemTypeCount() == 10, "News::ItemType::Count changed, update console command!");
+        static_assert(NewsItem::GetTypeCount() == 10, "NewsItem::Type::Count changed, update console command!");
         console.WriteLine("add_news_item <type> <message> <assoc>");
         console.WriteLine("type is one of:");
-        console.WriteLine("    0 (News::ItemType::Null)");
-        console.WriteLine("    1 (News::ItemType::Ride)");
-        console.WriteLine("    2 (News::ItemType::PeepOnRide)");
-        console.WriteLine("    3 (News::ItemType::Peep)");
-        console.WriteLine("    4 (News::ItemType::Money)");
-        console.WriteLine("    5 (News::ItemType::Blank)");
-        console.WriteLine("    6 (News::ItemType::Research)");
-        console.WriteLine("    7 (News::ItemType::Peeps)");
-        console.WriteLine("    8 (News::ItemType::Award)");
-        console.WriteLine("    9 (News::ItemType::Graph)");
+        console.WriteLine("    0 (NewsItem::Type::Null)");
+        console.WriteLine("    1 (NewsItem::Type::Ride)");
+        console.WriteLine("    2 (NewsItem::Type::PeepOnRide)");
+        console.WriteLine("    3 (NewsItem::Type::Peep)");
+        console.WriteLine("    4 (NewsItem::Type::Money)");
+        console.WriteLine("    5 (NewsItem::Type::Blank)");
+        console.WriteLine("    6 (NewsItem::Type::Research)");
+        console.WriteLine("    7 (NewsItem::Type::Peeps)");
+        console.WriteLine("    8 (NewsItem::Type::Award)");
+        console.WriteLine("    9 (NewsItem::Type::Graph)");
         console.WriteLine("message is the message to display, wrapped in quotes for multiple words");
         console.WriteLine("assoc is the associated id of ride/peep/tile/etc.");
         return 1;
@@ -1679,7 +1679,7 @@ static int32_t cc_add_news_item([[maybe_unused]] InteractiveConsole& console, [[
     auto type = atoi(argv[0].c_str());
     auto msg = argv[1].c_str();
     auto assoc = atoi(argv[2].c_str());
-    news_item_add_to_queue_raw(static_cast<News::ItemType>(type), msg, assoc);
+    news_item_add_to_queue_raw(static_cast<NewsItem::Type>(type), msg, assoc);
     return 0;
 }
 

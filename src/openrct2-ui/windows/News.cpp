@@ -285,11 +285,11 @@ static void window_news_scrollpaint(rct_window* w, rct_drawpixelinfo* dpi, int32
 
             switch (newsItem.Type)
             {
-                case News::ItemType::Ride:
+                case NewsItem::Type::Ride:
                     gfx_draw_sprite(dpi, SPR_RIDE, screenCoords, 0);
                     break;
-                case News::ItemType::Peep:
-                case News::ItemType::PeepOnRide:
+                case NewsItem::Type::Peep:
+                case NewsItem::Type::PeepOnRide:
                 {
                     rct_drawpixelinfo cliped_dpi;
                     if (!clip_drawpixelinfo(&cliped_dpi, dpi, screenCoords + ScreenCoordsXY{ 1, 1 }, 22, 22))
@@ -322,24 +322,24 @@ static void window_news_scrollpaint(rct_window* w, rct_drawpixelinfo* dpi, int32
                     gfx_draw_sprite(&cliped_dpi, image_id, clipCoords, 0);
                     break;
                 }
-                case News::ItemType::Money:
+                case NewsItem::Type::Money:
                     gfx_draw_sprite(dpi, SPR_FINANCE, screenCoords, 0);
                     break;
-                case News::ItemType::Research:
+                case NewsItem::Type::Research:
                     gfx_draw_sprite(dpi, newsItem.Assoc < 0x10000 ? SPR_NEW_SCENERY : SPR_NEW_RIDE, screenCoords, 0);
                     break;
-                case News::ItemType::Peeps:
+                case NewsItem::Type::Peeps:
                     gfx_draw_sprite(dpi, SPR_GUESTS, screenCoords, 0);
                     break;
-                case News::ItemType::Award:
+                case NewsItem::Type::Award:
                     gfx_draw_sprite(dpi, SPR_AWARD, screenCoords, 0);
                     break;
-                case News::ItemType::Graph:
+                case NewsItem::Type::Graph:
                     gfx_draw_sprite(dpi, SPR_GRAPH, screenCoords, 0);
                     break;
-                case News::ItemType::Null:
-                case News::ItemType::Blank:
-                case News::ItemType::Count:
+                case NewsItem::Type::Null:
+                case NewsItem::Type::Blank:
+                case NewsItem::Type::Count:
                     break;
             }
         }

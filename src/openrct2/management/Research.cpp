@@ -266,7 +266,7 @@ void research_finish_item(ResearchItem* researchItem)
             {
                 if (gConfigNotifications.ride_researched)
                 {
-                    news_item_add_to_queue(News::ItemType::Research, availabilityString, researchItem->rawValue);
+                    news_item_add_to_queue(NewsItem::Type::Research, availabilityString, researchItem->rawValue);
                 }
             }
 
@@ -289,7 +289,7 @@ void research_finish_item(ResearchItem* researchItem)
                 if (gConfigNotifications.ride_researched)
                 {
                     news_item_add_to_queue(
-                        News::ItemType::Research, STR_NEWS_ITEM_RESEARCH_NEW_SCENERY_SET_AVAILABLE, researchItem->rawValue);
+                        NewsItem::Type::Research, STR_NEWS_ITEM_RESEARCH_NEW_SCENERY_SET_AVAILABLE, researchItem->rawValue);
                 }
             }
 

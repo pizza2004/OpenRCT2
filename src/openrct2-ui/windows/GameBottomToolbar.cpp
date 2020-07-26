@@ -157,7 +157,7 @@ rct_window* window_game_bottom_toolbar_open()
  */
 static void window_game_bottom_toolbar_mouseup(rct_window* w, rct_widgetindex widgetIndex)
 {
-    NewsItem* newsItem;
+    NewsItem::Object* newsItem;
 
     switch (widgetIndex)
     {
@@ -321,7 +321,7 @@ static void window_game_bottom_toolbar_invalidate(rct_window* w)
     }
     else
     {
-        NewsItem* newsItem = news_item_get(0);
+        NewsItem::Object* newsItem = news_item_get(0);
         window_game_bottom_toolbar_widgets[WIDX_MIDDLE_OUTSET].type = WWT_IMGBTN;
         window_game_bottom_toolbar_widgets[WIDX_MIDDLE_INSET].type = WWT_PLACEHOLDER;
         window_game_bottom_toolbar_widgets[WIDX_NEWS_SUBJECT].type = WWT_FLATBTN;
@@ -568,7 +568,7 @@ static void window_game_bottom_toolbar_draw_right_panel(rct_drawpixelinfo* dpi, 
 static void window_game_bottom_toolbar_draw_news_item(rct_drawpixelinfo* dpi, rct_window* w)
 {
     int32_t width;
-    NewsItem* newsItem;
+    NewsItem::Object* newsItem;
     rct_widget* middleOutsetWidget;
 
     middleOutsetWidget = &window_game_bottom_toolbar_widgets[WIDX_MIDDLE_OUTSET];
@@ -592,11 +592,11 @@ static void window_game_bottom_toolbar_draw_news_item(rct_drawpixelinfo* dpi, rc
                           window_game_bottom_toolbar_widgets[WIDX_NEWS_SUBJECT].top };
     switch (newsItem->Type)
     {
-        case News::ItemType::Ride:
+        case NewsItem::Type::Ride:
             gfx_draw_sprite(dpi, SPR_RIDE, screenCoords, 0);
             break;
-        case News::ItemType::PeepOnRide:
-        case News::ItemType::Peep:
+        case NewsItem::Type::PeepOnRide:
+        case NewsItem::Type::Peep:
         {
             if (newsItem->HasButton())
                 break;
@@ -650,24 +650,24 @@ static void window_game_bottom_toolbar_draw_news_item(rct_drawpixelinfo* dpi, rc
             }
             break;
         }
-        case News::ItemType::Money:
+        case NewsItem::Type::Money:
             gfx_draw_sprite(dpi, SPR_FINANCE, screenCoords, 0);
             break;
-        case News::ItemType::Research:
+        case NewsItem::Type::Research:
             gfx_draw_sprite(dpi, (newsItem->Assoc < 0x10000 ? SPR_NEW_SCENERY : SPR_NEW_RIDE), screenCoords, 0);
             break;
-        case News::ItemType::Peeps:
+        case NewsItem::Type::Peeps:
             gfx_draw_sprite(dpi, SPR_GUESTS, screenCoords, 0);
             break;
-        case News::ItemType::Award:
+        case NewsItem::Type::Award:
             gfx_draw_sprite(dpi, SPR_AWARD, screenCoords, 0);
             break;
-        case News::ItemType::Graph:
+        case NewsItem::Type::Graph:
             gfx_draw_sprite(dpi, SPR_GRAPH, screenCoords, 0);
             break;
-        case News::ItemType::Null:
-        case News::ItemType::Blank:
-        case News::ItemType::Count:
+        case NewsItem::Type::Null:
+        case NewsItem::Type::Blank:
+        case NewsItem::Type::Count:
             break;
     }
 }

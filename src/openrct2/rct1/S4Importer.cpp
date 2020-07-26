@@ -1365,8 +1365,8 @@ private:
         {
             rct12_news_item* newsItem = &_s4.messages[i];
 
-            if (newsItem->Type == static_cast<uint8_t>(News::ItemType::Peep)
-                || newsItem->Type == static_cast<uint8_t>(News::ItemType::PeepOnRide))
+            if (newsItem->Type == static_cast<uint8_t>(NewsItem::Type::Peep)
+                || newsItem->Type == static_cast<uint8_t>(NewsItem::Type::PeepOnRide))
             {
                 newsItem->Assoc = MapSpriteIndex(newsItem->Assoc, spriteIndexMap);
             }
@@ -2531,16 +2531,16 @@ private:
         for (size_t i = 0; i < RCT12_MAX_NEWS_ITEMS; i++)
         {
             const rct12_news_item* src = &_s4.messages[i];
-            NewsItem* dst = &gNewsItems[i];
+            NewsItem::Object* dst = &gNewsItems[i];
 
-            dst->Type = static_cast<News::ItemType>(src->Type);
+            dst->Type = static_cast<NewsItem::Type>(src->Type);
             dst->Flags = src->Flags;
             dst->Ticks = src->Ticks;
             dst->MonthYear = src->MonthYear;
             dst->Day = src->Day;
             std::copy(std::begin(src->Text), std::end(src->Text), dst->Text);
 
-            if (dst->Type == News::ItemType::Research)
+            if (dst->Type == NewsItem::Type::Research)
             {
                 uint8_t researchItem = src->Assoc & 0x000000FF;
                 uint8_t researchType = (src->Assoc & 0x00FF0000) >> 16;

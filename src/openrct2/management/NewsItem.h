@@ -18,9 +18,9 @@
 
 struct CoordsXYZ;
 
-namespace News
+namespace NewsItem
 {
-    enum class ItemType : uint8_t
+    enum class Type : uint8_t
     {
         Null,
         Ride,
@@ -35,84 +35,84 @@ namespace News
         Count
     };
 
-    enum ItemTypeProperty : uint8_t
+    enum TypeProperty : uint8_t
     {
         HasLocation = 1,
         HasSubject = 2,
     };
 
-    enum ItemFlags : uint8_t
+    enum Flags : uint8_t
     {
         HasButton = 1 << 0,
     };
-} // namespace News
 
-constexpr size_t GetNewsItemTypeCount()
-{
-    return static_cast<size_t>(News::ItemType::Count);
-}
-
-/**
- * A single news item / message.
- */
-struct NewsItem
-{
-    News::ItemType Type;
-    uint8_t Flags;
-    uint32_t Assoc;
-    uint16_t Ticks;
-    uint16_t MonthYear;
-    uint8_t Day;
-    utf8 Text[256];
-
-    constexpr bool IsEmpty() const noexcept
+    constexpr size_t GetTypeCount()
     {
-        return Type == News::ItemType::Null;
+        return static_cast<size_t>(NewsItem::Type::Count);
     }
 
-    constexpr uint8_t GetTypeProperties() const
+    /**
+     * A single news item / message.
+     */
+    struct Object
     {
-        switch (Type)
+        NewsItem::Type Type;
+        uint8_t Flags;
+        uint32_t Assoc;
+        uint16_t Ticks;
+        uint16_t MonthYear;
+        uint8_t Day;
+        utf8 Text[256];
+
+        constexpr bool IsEmpty() const noexcept
         {
-            case News::ItemType::Blank:
-                return News::ItemTypeProperty::HasLocation;
-            case News::ItemType::Money:
-            case News::ItemType::Research:
-            case News::ItemType::Peeps:
-            case News::ItemType::Award:
-            case News::ItemType::Graph:
-                return News::ItemTypeProperty::HasSubject;
-            case News::ItemType::Ride:
-            case News::ItemType::PeepOnRide:
-            case News::ItemType::Peep:
-                return News::ItemTypeProperty::HasLocation | News::ItemTypeProperty::HasSubject;
-            case News::ItemType::Null:
-            case News::ItemType::Count:
-            default:
-                return 0;
+            return Type == NewsItem::Type::Null;
         }
-    }
 
-    void SetFlags(uint8_t flag)
-    {
-        Flags |= flag;
-    }
+        constexpr uint8_t GetTypeProperties() const
+        {
+            switch (Type)
+            {
+                case NewsItem::Type::Blank:
+                    return NewsItem::TypeProperty::HasLocation;
+                case NewsItem::Type::Money:
+                case NewsItem::Type::Research:
+                case NewsItem::Type::Peeps:
+                case NewsItem::Type::Award:
+                case NewsItem::Type::Graph:
+                    return NewsItem::TypeProperty::HasSubject;
+                case NewsItem::Type::Ride:
+                case NewsItem::Type::PeepOnRide:
+                case NewsItem::Type::Peep:
+                    return NewsItem::TypeProperty::HasLocation | NewsItem::TypeProperty::HasSubject;
+                case NewsItem::Type::Null:
+                case NewsItem::Type::Count:
+                default:
+                    return 0;
+            }
+        }
 
-    constexpr bool TypeHasSubject() const
-    {
-        return this->GetTypeProperties() & News::ItemTypeProperty::HasSubject;
-    }
+        void SetFlags(uint8_t flag)
+        {
+            Flags |= flag;
+        }
 
-    constexpr bool TypeHasLocation() const
-    {
-        return this->GetTypeProperties() & News::ItemTypeProperty::HasLocation;
-    }
+        constexpr bool TypeHasSubject() const
+        {
+            return this->GetTypeProperties() & NewsItem::TypeProperty::HasSubject;
+        }
 
-    constexpr bool HasButton() const noexcept
-    {
-        return Flags & News::ItemFlags::HasButton;
-    }
-};
+        constexpr bool TypeHasLocation() const
+        {
+            return this->GetTypeProperties() & NewsItem::TypeProperty::HasLocation;
+        }
+
+        constexpr bool HasButton() const noexcept
+        {
+            return Flags & NewsItem::Flags::HasButton;
+        }
+    };
+} // namespace News
 
 constexpr int32_t NEWS_ITEM_HISTORY_START = 11;
 constexpr int32_t MAX_NEWS_ITEMS_ARCHIVE = 50;
@@ -123,13 +123,13 @@ template<std::size_t N> class NewsItemQueue
 public:
     static_assert(N > 0, "Cannot instantiate NewsItemQueue with size=0");
 
-    using value_type = typename std::array<NewsItem, N>::value_type;
+    using value_type = typename std::array<NewsItem::Object, N>::value_type;
     using pointer = value_type*;
     using const_pointer = const value_type*;
     using reference = value_type&;
     using const_reference = const value_type&;
-    using iterator = typename std::array<NewsItem, N>::iterator;
-    using const_iterator = typename std::array<NewsItem, N>::const_iterator;
+    using iterator = typename std::array<NewsItem::Object, N>::iterator;
+    using const_iterator = typename std::array<NewsItem::Object, N>::const_iterator;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
     using reverse_iterator = std::reverse_iterator<iterator>;
@@ -137,7 +137,7 @@ public:
 
     NewsItemQueue()
     {
-        Queue[0].Type = News::ItemType::Null;
+        Queue[0].Type = NewsItem::Type::Null;
     }
 
     constexpr iterator begin() noexcept
@@ -195,7 +195,7 @@ public:
     void pop_front()
     {
         std::move(std::begin(Queue) + 1, std::end(Queue), std::begin(Queue));
-        Queue[N - 1].Type = News::ItemType::Null;
+        Queue[N - 1].Type = NewsItem::Type::Null;
     }
 
     void push_back(const_reference item)
@@ -212,7 +212,7 @@ public:
             *it = item;
             ++it;
             if (std::distance(it, std::end(Queue)))
-                it->Type = News::ItemType::Null;
+                it->Type = NewsItem::Type::Null;
         }
     }
 
@@ -232,29 +232,29 @@ public:
 
     void clear() noexcept
     {
-        front().Type = News::ItemType::Null;
+        front().Type = NewsItem::Type::Null;
     }
 
 private:
-    std::array<NewsItem, N> Queue;
+    std::array<NewsItem::Object, N> Queue;
 };
 
 struct NewsItemQueues
 {
-    NewsItem& operator[](size_t index);
-    const NewsItem& operator[](size_t index) const;
-    NewsItem* At(int32_t index);
-    const NewsItem* At(int32_t index) const;
+    NewsItem::Object& operator[](size_t index);
+    const NewsItem::Object& operator[](size_t index) const;
+    NewsItem::Object* At(int32_t index);
+    const NewsItem::Object* At(int32_t index) const;
     bool IsEmpty() const;
     void Clear();
     uint16_t IncrementTicks();
-    NewsItem& Current();
-    const NewsItem& Current() const;
-    NewsItem& Oldest();
-    const NewsItem& Oldest() const;
+    NewsItem::Object& Current();
+    const NewsItem::Object& Current() const;
+    NewsItem::Object& Oldest();
+    const NewsItem::Object& Oldest() const;
     bool CurrentShouldBeArchived() const;
     void ArchiveCurrent();
-    NewsItem* FirstOpenOrNewSlot();
+    NewsItem::Object* FirstOpenOrNewSlot();
     const auto& GetRecent() const
     {
         return Recent;
@@ -282,7 +282,7 @@ struct NewsItemQueues
 
 private:
     int32_t RemoveTime() const;
-    void AppendToArchive(NewsItem& item);
+    void AppendToArchive(NewsItem::Object& item);
 
     NewsItemQueue<NEWS_ITEM_HISTORY_START> Recent;
     NewsItemQueue<MAX_NEWS_ITEMS_ARCHIVE> Archived;
@@ -295,20 +295,20 @@ void news_item_init_queue();
 void news_item_update_current();
 void news_item_close_current();
 
-std::optional<CoordsXYZ> news_item_get_subject_location(News::ItemType type, int32_t subject);
+std::optional<CoordsXYZ> news_item_get_subject_location(NewsItem::Type type, int32_t subject);
 
-NewsItem* news_item_add_to_queue(News::ItemType type, rct_string_id string_id, uint32_t assoc);
-NewsItem* news_item_add_to_queue_raw(News::ItemType type, const utf8* text, uint32_t assoc);
+NewsItem::Object* news_item_add_to_queue(NewsItem::Type type, rct_string_id string_id, uint32_t assoc);
+NewsItem::Object* news_item_add_to_queue_raw(NewsItem::Type type, const utf8* text, uint32_t assoc);
 
-void news_item_open_subject(News::ItemType type, int32_t subject);
+void news_item_open_subject(NewsItem::Type type, int32_t subject);
 
-void news_item_disable_news(News::ItemType type, uint32_t assoc);
+void news_item_disable_news(NewsItem::Type type, uint32_t assoc);
 
-NewsItem* news_item_get(int32_t index);
+NewsItem::Object* news_item_get(int32_t index);
 
 bool news_item_is_queue_empty();
 
 bool news_item_is_valid_idx(int32_t index);
 
-void news_item_add_to_queue_custom(NewsItem* newNewsItem);
+void news_item_add_to_queue_custom(NewsItem::Object* newNewsItem);
 void news_item_remove(int32_t index);

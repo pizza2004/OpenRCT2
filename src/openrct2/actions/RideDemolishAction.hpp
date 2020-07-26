@@ -141,7 +141,7 @@ private:
 
         sub_6CB945(ride);
         ride_clear_leftover_entrances(ride);
-        news_item_disable_news(NewsItem::Type::Ride, _rideIndex);
+        NewsItem::DisableNews(NewsItem::Type::Ride, _rideIndex);
 
         for (BannerIndex i = 0; i < MAX_BANNERS; i++)
         {

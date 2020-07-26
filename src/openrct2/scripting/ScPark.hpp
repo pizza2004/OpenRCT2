@@ -221,7 +221,7 @@ namespace OpenRCT2::Scripting
 
         void remove()
         {
-            news_item_remove(static_cast<int32_t>(_index));
+            NewsItem::Remove(static_cast<int32_t>(_index));
         }
     };
 
@@ -365,7 +365,7 @@ namespace OpenRCT2::Scripting
                         assoc = static_cast<uint32_t>(dukSubject.as_int());
                     }
                 }
-                news_item_add_to_queue_raw(type, text.c_str(), assoc);
+                NewsItem::AddToQueueRaw(type, text.c_str(), assoc);
             }
             catch (const DukException&)
             {

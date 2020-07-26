@@ -2533,7 +2533,7 @@ void ride_breakdown_add_news_item(Ride* ride)
     ride->FormatNameTo(ft);
     if (gConfigNotifications.ride_broken_down)
     {
-        news_item_add_to_queue(NewsItem::Type::Ride, STR_RIDE_IS_BROKEN_DOWN, ride->id);
+        NewsItem::AddToQueue(NewsItem::Type::Ride, STR_RIDE_IS_BROKEN_DOWN, ride->id);
     }
 }
 
@@ -2560,7 +2560,7 @@ static void ride_breakdown_status_update(Ride* ride)
             ride->FormatNameTo(ft);
             if (gConfigNotifications.ride_warnings)
             {
-                news_item_add_to_queue(NewsItem::Type::Ride, STR_RIDE_IS_STILL_NOT_FIXED, ride->id);
+                NewsItem::AddToQueue(NewsItem::Type::Ride, STR_RIDE_IS_STILL_NOT_FIXED, ride->id);
             }
         }
     }
@@ -3211,7 +3211,7 @@ static void ride_entrance_exit_connected(Ride* ride)
             ride->FormatNameTo(ft);
             if (gConfigNotifications.ride_warnings)
             {
-                news_item_add_to_queue(NewsItem::Type::Ride, STR_ENTRANCE_NOT_CONNECTED, ride->id);
+                NewsItem::AddToQueue(NewsItem::Type::Ride, STR_ENTRANCE_NOT_CONNECTED, ride->id);
             }
             ride->connected_message_throttle = 3;
         }
@@ -3223,7 +3223,7 @@ static void ride_entrance_exit_connected(Ride* ride)
             ride->FormatNameTo(ft);
             if (gConfigNotifications.ride_warnings)
             {
-                news_item_add_to_queue(NewsItem::Type::Ride, STR_EXIT_NOT_CONNECTED, ride->id);
+                NewsItem::AddToQueue(NewsItem::Type::Ride, STR_EXIT_NOT_CONNECTED, ride->id);
             }
             ride->connected_message_throttle = 3;
         }
@@ -3299,7 +3299,7 @@ static void ride_shop_connected(Ride* ride)
     ride->FormatNameTo(ft);
     if (gConfigNotifications.ride_warnings)
     {
-        news_item_add_to_queue(NewsItem::Type::Ride, STR_ENTRANCE_NOT_CONNECTED, ride->id);
+        NewsItem::AddToQueue(NewsItem::Type::Ride, STR_ENTRANCE_NOT_CONNECTED, ride->id);
     }
 
     ride->connected_message_throttle = 3;
@@ -7099,7 +7099,7 @@ void Ride::Crash(uint8_t vehicleIndex)
     FormatNameTo(ft);
     if (gConfigNotifications.ride_crashed)
     {
-        news_item_add_to_queue(NewsItem::Type::Ride, STR_RIDE_HAS_CRASHED, id);
+        NewsItem::AddToQueue(NewsItem::Type::Ride, STR_RIDE_HAS_CRASHED, id);
     }
 }
 

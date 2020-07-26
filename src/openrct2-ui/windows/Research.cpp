@@ -282,7 +282,7 @@ static void window_research_development_mouseup(rct_window* w, rct_widgetindex w
             window_research_set_page(w, widgetIndex - WIDX_TAB_1);
             break;
         case WIDX_LAST_DEVELOPMENT_BUTTON:
-            news_item_open_subject(NewsItem::Type::Research, gResearchLastItem->rawValue);
+            NewsItem::OpenSubject(NewsItem::Type::Research, gResearchLastItem->rawValue);
             break;
     }
 }

@@ -636,7 +636,7 @@ void award_update_all()
                 gCurrentAwards[freeAwardEntryIndex].Time = 5;
                 if (gConfigNotifications.park_award)
                 {
-                    news_item_add_to_queue(NewsItem::Type::Award, AwardNewsStrings[awardType], 0);
+                    NewsItem::AddToQueue(NewsItem::Type::Award, AwardNewsStrings[awardType], 0);
                 }
                 window_invalidate_by_class(WC_PARK_INFORMATION);
             }

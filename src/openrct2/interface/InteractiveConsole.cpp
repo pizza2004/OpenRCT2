@@ -1679,7 +1679,7 @@ static int32_t cc_add_news_item([[maybe_unused]] InteractiveConsole& console, [[
     auto type = atoi(argv[0].c_str());
     auto msg = argv[1].c_str();
     auto assoc = atoi(argv[2].c_str());
-    news_item_add_to_queue_raw(static_cast<NewsItem::Type>(type), msg, assoc);
+    NewsItem::AddToQueueRaw(static_cast<NewsItem::Type>(type), msg, assoc);
     return 0;
 }
 

@@ -85,7 +85,7 @@ static void marketing_raise_finished_notification(const MarketingCampaign& campa
             ft.Add<rct_string_id>(ShopItems[campaign.ShopItemType].Naming.Plural);
         }
 
-        news_item_add_to_queue(NewsItem::Type::Money, MarketingCampaignNames[campaign.Type][2], 0);
+        NewsItem::AddToQueue(NewsItem::Type::Money, MarketingCampaignNames[campaign.Type][2], 0);
     }
 }
 

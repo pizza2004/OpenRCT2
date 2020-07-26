@@ -237,78 +237,78 @@ namespace NewsItem
     private:
         std::array<NewsItem::Object, N> QueueObject;
     };
+
+    struct Queues
+    {
+        NewsItem::Object& operator[](size_t index);
+        const NewsItem::Object& operator[](size_t index) const;
+        NewsItem::Object* At(int32_t index);
+        const NewsItem::Object* At(int32_t index) const;
+        bool IsEmpty() const;
+        void Clear();
+        uint16_t IncrementTicks();
+        NewsItem::Object& Current();
+        const NewsItem::Object& Current() const;
+        NewsItem::Object& Oldest();
+        const NewsItem::Object& Oldest() const;
+        bool CurrentShouldBeArchived() const;
+        void ArchiveCurrent();
+        NewsItem::Object* FirstOpenOrNewSlot();
+        const auto& GetRecent() const
+        {
+            return Recent;
+        }
+        const auto& GetArchived() const
+        {
+            return Archived;
+        }
+
+        template<typename Predicate> void ForeachRecentNews(Predicate&& p)
+        {
+            for (auto& newsItem : Recent)
+            {
+                p(newsItem);
+            }
+        }
+
+        template<typename Predicate> void ForeachArchivedNews(Predicate&& p)
+        {
+            for (auto& newsItem : Archived)
+            {
+                p(newsItem);
+            }
+        }
+
+    private:
+        int32_t RemoveTime() const;
+        void AppendToArchive(NewsItem::Object& item);
+
+        NewsItem::Queue<NewsItem::HistoryStart> Recent;
+        NewsItem::Queue<NewsItem::ItemsArchive> Archived;
+    };
+
+    void InitQueue();
+
+    void UpdateCurrent();
+    void CloseCurrent();
+
+    std::optional<CoordsXYZ> GetSubjectLocation(NewsItem::Type type, int32_t subject);
+
+    NewsItem::Object* AddToQueue(NewsItem::Type type, rct_string_id string_id, uint32_t assoc);
+    NewsItem::Object* AddToQueueRaw(NewsItem::Type type, const utf8* text, uint32_t assoc);
+
+    void OpenSubject(NewsItem::Type type, int32_t subject);
+
+    void DisableNews(NewsItem::Type type, uint32_t assoc);
+
+    NewsItem::Object* Get(int32_t index);
+
+    bool IsQueueEmpty();
+
+    bool IsValidIndex(int32_t index);
+
+    void AddToQueueCustom(NewsItem::Object* newNewsItem);
+    void Remove(int32_t index);
 } // namespace News
 
-struct NewsItemQueues
-{
-    NewsItem::Object& operator[](size_t index);
-    const NewsItem::Object& operator[](size_t index) const;
-    NewsItem::Object* At(int32_t index);
-    const NewsItem::Object* At(int32_t index) const;
-    bool IsEmpty() const;
-    void Clear();
-    uint16_t IncrementTicks();
-    NewsItem::Object& Current();
-    const NewsItem::Object& Current() const;
-    NewsItem::Object& Oldest();
-    const NewsItem::Object& Oldest() const;
-    bool CurrentShouldBeArchived() const;
-    void ArchiveCurrent();
-    NewsItem::Object* FirstOpenOrNewSlot();
-    const auto& GetRecent() const
-    {
-        return Recent;
-    }
-    const auto& GetArchived() const
-    {
-        return Archived;
-    }
-
-    template<typename Predicate> void ForeachRecentNews(Predicate&& p)
-    {
-        for (auto& newsItem : Recent)
-        {
-            p(newsItem);
-        }
-    }
-
-    template<typename Predicate> void ForeachArchivedNews(Predicate&& p)
-    {
-        for (auto& newsItem : Archived)
-        {
-            p(newsItem);
-        }
-    }
-
-private:
-    int32_t RemoveTime() const;
-    void AppendToArchive(NewsItem::Object& item);
-
-    NewsItem::Queue<NewsItem::HistoryStart> Recent;
-    NewsItem::Queue<NewsItem::ItemsArchive> Archived;
-};
-
-extern NewsItemQueues gNewsItems;
-
-void news_item_init_queue();
-
-void news_item_update_current();
-void news_item_close_current();
-
-std::optional<CoordsXYZ> news_item_get_subject_location(NewsItem::Type type, int32_t subject);
-
-NewsItem::Object* news_item_add_to_queue(NewsItem::Type type, rct_string_id string_id, uint32_t assoc);
-NewsItem::Object* news_item_add_to_queue_raw(NewsItem::Type type, const utf8* text, uint32_t assoc);
-
-void news_item_open_subject(NewsItem::Type type, int32_t subject);
-
-void news_item_disable_news(NewsItem::Type type, uint32_t assoc);
-
-NewsItem::Object* news_item_get(int32_t index);
-
-bool news_item_is_queue_empty();
-
-bool news_item_is_valid_idx(int32_t index);
-
-void news_item_add_to_queue_custom(NewsItem::Object* newNewsItem);
-void news_item_remove(int32_t index);
+extern NewsItem::Queues gNewsItems;

@@ -389,7 +389,7 @@ void game_convert_news_items_to_utf8()
 {
     for (int32_t i = 0; i < NewsItem::MaxItems; i++)
     {
-        NewsItem::Object* newsItem = news_item_get(i);
+        NewsItem::Object* newsItem = NewsItem::Get(i);
 
         if (!str_is_null_or_empty(newsItem->Text))
         {

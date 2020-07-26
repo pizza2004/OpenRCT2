@@ -34,13 +34,13 @@ namespace News
         Graph,
         Count
     };
-}
 
-enum
-{
-    NEWS_TYPE_HAS_LOCATION = 1,
-    NEWS_TYPE_HAS_SUBJECT = 2,
-};
+    enum ItemTypeProperty : uint8_t
+    {
+        HasLocation = 1,
+        HasSubject = 2,
+    };
+} // namespace News
 
 enum
 {
@@ -75,22 +75,32 @@ struct NewsItem
         switch (Type)
         {
             case News::ItemType::Blank:
-                return NEWS_TYPE_HAS_LOCATION;
+                return News::ItemTypeProperty::HasLocation;
             case News::ItemType::Money:
             case News::ItemType::Research:
             case News::ItemType::Peeps:
             case News::ItemType::Award:
             case News::ItemType::Graph:
-                return NEWS_TYPE_HAS_SUBJECT;
+                return News::ItemTypeProperty::HasSubject;
             case News::ItemType::Ride:
             case News::ItemType::PeepOnRide:
             case News::ItemType::Peep:
-                return NEWS_TYPE_HAS_LOCATION | NEWS_TYPE_HAS_SUBJECT;
+                return News::ItemTypeProperty::HasLocation | News::ItemTypeProperty::HasSubject;
             case News::ItemType::Null:
             case News::ItemType::Count:
             default:
                 return 0;
         }
+    }
+
+    constexpr bool TypeHasSubject() const
+    {
+        return this->GetTypeProperties() & News::ItemTypeProperty::HasSubject;
+    }
+
+    constexpr bool TypeHasLocation() const
+    {
+        return this->GetTypeProperties() & News::ItemTypeProperty::HasLocation;
     }
 };
 

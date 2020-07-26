@@ -198,12 +198,12 @@ static void window_news_scrollmousedown(rct_window* w, int32_t scrollIndex, cons
                 buttonIndex = 0;
                 break;
             }
-            else if (mutableScreenCoords.x < 351 && GetNewsItemTypeProperties(newsItem.Type) & NEWS_TYPE_HAS_SUBJECT)
+            else if (mutableScreenCoords.x < 351 && newsItem.HasTypeSubject())
             {
                 buttonIndex = 1;
                 break;
             }
-            else if (mutableScreenCoords.x < 376 && GetNewsItemTypeProperties(newsItem.Type) & NEWS_TYPE_HAS_LOCATION)
+            else if (mutableScreenCoords.x < 376 && newsItem.HasTypeLocation())
             {
                 buttonIndex = 2;
                 break;
@@ -269,7 +269,7 @@ static void window_news_scrollpaint(rct_window* w, rct_drawpixelinfo* dpi, int32
         gfx_draw_string_left_wrapped(dpi, &text, { 2, y + lineHeight }, 325, STR_BOTTOM_TOOLBAR_NEWS_TEXT, COLOUR_BRIGHT_GREEN);
 
         // Subject button
-        if ((GetNewsItemTypeProperties(newsItem.Type) & NEWS_TYPE_HAS_SUBJECT) && !(newsItem.Flags & NEWS_FLAG_HAS_BUTTON))
+        if ((newsItem.HasTypeSubject()) && !(newsItem.Flags & NEWS_FLAG_HAS_BUTTON))
         {
             auto screenCoords = ScreenCoordsXY{ 328, y + lineHeight + 4 };
 
@@ -347,7 +347,7 @@ static void window_news_scrollpaint(rct_window* w, rct_drawpixelinfo* dpi, int32
         }
 
         // Location button
-        if ((GetNewsItemTypeProperties(newsItem.Type) & NEWS_TYPE_HAS_LOCATION) && !(newsItem.Flags & NEWS_FLAG_HAS_BUTTON))
+        if ((newsItem.HasTypeLocation()) && !(newsItem.Flags & NEWS_FLAG_HAS_BUTTON))
         {
             auto screenCoords = ScreenCoordsXY{ 352, y + lineHeight + 4 };
 

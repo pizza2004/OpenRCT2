@@ -34,13 +34,15 @@ namespace News
         Graph,
         Count
     };
-}
 
-enum
-{
-    NEWS_TYPE_HAS_LOCATION = 1,
-    NEWS_TYPE_HAS_SUBJECT = 2,
-};
+    enum class ItemTypeProperty : uint8_t
+    {
+        Null,
+        HasLocation,
+        HasSubject,
+        HasSubjectAndLocation
+    };
+} // namespace News
 
 enum
 {
@@ -52,27 +54,27 @@ constexpr size_t GetNewsItemTypeCount()
     return static_cast<size_t>(News::ItemType::Count);
 }
 
-constexpr uint8_t GetNewsItemTypeProperties(News::ItemType type)
+constexpr News::ItemTypeProperty GetNewsItemTypeProperties(News::ItemType type)
 {
     switch (type)
     {
         case News::ItemType::Null:
-            return 0;
+            return News::ItemTypeProperty::Null;
         case News::ItemType::Ride:
         case News::ItemType::PeepOnRide:
         case News::ItemType::Peep:
-            return NEWS_TYPE_HAS_LOCATION | NEWS_TYPE_HAS_SUBJECT;
+            return News::ItemTypeProperty::HasSubjectAndLocation;
         case News::ItemType::Money:
-            return NEWS_TYPE_HAS_SUBJECT;
+            return News::ItemTypeProperty::HasSubject;
         case News::ItemType::Blank:
-            return NEWS_TYPE_HAS_LOCATION;
+            return News::ItemTypeProperty::HasLocation;
         case News::ItemType::Research:
         case News::ItemType::Peeps:
         case News::ItemType::Award:
         case News::ItemType::Graph:
-            return NEWS_TYPE_HAS_SUBJECT;
+            return News::ItemTypeProperty::HasSubject;
         default:
-            return 0;
+            return News::ItemTypeProperty::Null;
     }
 }
 
@@ -92,6 +94,22 @@ struct NewsItem
     constexpr bool IsEmpty() const noexcept
     {
         return Type == News::ItemType::Null;
+    }
+
+    constexpr bool HasTypeSubject() const
+    {
+        auto properties = GetNewsItemTypeProperties(Type);
+        if (properties == News::ItemTypeProperty::HasSubject || properties == News::ItemTypeProperty::HasSubjectAndLocation)
+            return true;
+        return false;
+    }
+
+    constexpr bool HasTypeLocation() const
+    {
+        auto properties = GetNewsItemTypeProperties(Type);
+        if (properties == News::ItemTypeProperty::HasLocation || properties == News::ItemTypeProperty::HasSubjectAndLocation)
+            return true;
+        return false;
     }
 };
 

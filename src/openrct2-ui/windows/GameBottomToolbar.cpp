@@ -337,7 +337,7 @@ static void window_game_bottom_toolbar_invalidate(rct_window* w)
         if (subjectLoc == std::nullopt)
             w->disabled_widgets |= (1 << WIDX_NEWS_LOCATE);
 
-        if (!(GetNewsItemTypeProperties(newsItem->Type) & NEWS_TYPE_HAS_SUBJECT))
+        if (!(newsItem->HasTypeSubject()))
         {
             w->disabled_widgets |= (1 << WIDX_NEWS_SUBJECT);
             window_game_bottom_toolbar_widgets[WIDX_NEWS_SUBJECT].type = WWT_EMPTY;

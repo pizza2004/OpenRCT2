@@ -30,12 +30,13 @@ namespace OpenRCT2::Scripting
         "attraction", "peep_on_attraction", "peep", "money", "blank", "research", "guests", "award", "chart",
     };
 
-    inline uint8_t GetParkMessageType(const std::string& key)
+    inline News::ItemType GetParkMessageType(const std::string& key)
     {
         auto it = std::find(std::begin(ParkMessageTypeStrings), std::end(ParkMessageTypeStrings), key);
-        return it != std::end(ParkMessageTypeStrings)
-            ? static_cast<uint8_t>(NEWS_ITEM_RIDE + std::distance(std::begin(ParkMessageTypeStrings), it))
-            : static_cast<uint8_t>(NEWS_ITEM_BLANK);
+        return it != std::end(ParkMessageTypeStrings) ? static_cast<News::ItemType>(
+                   static_cast<uint8_t>(News::ItemType::Ride)
+                   + static_cast<uint8_t>(std::distance(std::begin(ParkMessageTypeStrings), it)))
+                                                      : News::ItemType::Blank;
     }
 
     inline std::string GetParkMessageType(uint8_t type)
@@ -52,7 +53,7 @@ namespace OpenRCT2::Scripting
     template<> inline NewsItem FromDuk(const DukValue& value)
     {
         NewsItem result{};
-        result.Type = GetParkMessageType(value["type"].as_string());
+        result.Type = static_cast<News::ItemType>(GetParkMessageType(value["type"].as_string()));
         result.Assoc = value["subject"].as_int();
         result.Ticks = value["tickCount"].as_int();
         result.MonthYear = value["month"].as_int();
@@ -162,7 +163,7 @@ namespace OpenRCT2::Scripting
             auto msg = GetMessage();
             if (msg != nullptr)
             {
-                return GetParkMessageType(msg->Type);
+                return GetParkMessageType(static_cast<uint8_t>(msg->Type));
             }
             return {};
         }
@@ -329,11 +330,11 @@ namespace OpenRCT2::Scripting
             // End the lists by setting next item to null
             if (index < NEWS_ITEM_HISTORY_START)
             {
-                gNewsItems[index].Type = NEWS_ITEM_NULL;
+                gNewsItems[index].Type = News::ItemType::Null;
             }
             if (archiveIndex < MAX_NEWS_ITEMS)
             {
-                gNewsItems[archiveIndex].Type = NEWS_ITEM_NULL;
+                gNewsItems[archiveIndex].Type = News::ItemType::Null;
             }
         }
 
@@ -343,7 +344,7 @@ namespace OpenRCT2::Scripting
             try
             {
                 uint32_t assoc = std::numeric_limits<uint32_t>::max();
-                uint8_t type = NEWS_ITEM_BLANK;
+                auto type = News::ItemType::Blank;
                 std::string text;
                 if (message.type() == DukValue::Type::STRING)
                 {
@@ -353,7 +354,7 @@ namespace OpenRCT2::Scripting
                 {
                     type = GetParkMessageType(message["type"].as_string());
                     text = language_convert_string(message["text"].as_string());
-                    if (type == NEWS_ITEM_BLANK)
+                    if (type == News::ItemType::Blank)
                     {
                         assoc = static_cast<uint32_t>(((COORDS_NULL & 0xFFFF) << 16) | (COORDS_NULL & 0xFFFF));
                     }
